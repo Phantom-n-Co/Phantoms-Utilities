@@ -161,15 +161,15 @@ configurations {
 }
 
 dependencies {
-    implementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
-    implementation "dev.technici4n:GrandPower:${grandpower_version}"
-    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+    implementation ("aztech:Modern-Industrialization:${modern_industrialization_version}")
+    implementation ("dev.technici4n:GrandPower:${grandpower_version}")
+    implementation ("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
 
     compileOnly ("org.appliedenergistics:appliedenergistics2:${ae2_version}:api")
     runtimeOnly ("org.appliedenergistics:appliedenergistics2:${ae2_version}")
 
-    runtimeOnly "net.swedz:tesseract-api-neoforge:${tesseract_version}-${minecraft_version}"
-    runtimeOnly "net.swedz:extended-industrialization:${extended_industrialization_version}-${minecraft_version}"
+    runtimeOnly ("net.swedz:tesseract-api-neoforge:${tesseract_version}-${minecraft_version}")
+    runtimeOnly ("net.swedz:extended-industrialization:${extended_industrialization_version}-${minecraft_version}")
 
     runtimeOnly ("dev.emi:emi-neoforge:${emi_version}+${minecraft_version}")
     runtimeOnly ("dev.architectury:architectury-neoforge:${architectury_version}")
@@ -180,8 +180,8 @@ dependencies {
     runtimeOnly ("curse.maven:ex-pattern-provider-892005:6251183")
     runtimeOnly ("curse.maven:jade-324717:5639932")
 
-    runtimeOnly "curse.maven:xycraft-653786:6872525"
-    runtimeOnly "curse.maven:xycraft-world-653789:6872532"
+    runtimeOnly ("curse.maven:xycraft-653786:6872525")
+    runtimeOnly ("curse.maven:xycraft-world-653789:6872532")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -198,7 +198,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_authors            : mod_authors,
             mod_description        : mod_description,
             ae2_version_range      : ae2_version_range,
-            mi_version_range       : modern_industrialization_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
