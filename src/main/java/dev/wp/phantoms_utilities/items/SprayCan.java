@@ -18,11 +18,12 @@ import dev.wp.phantoms_utilities.PUComponents;
 import dev.wp.phantoms_utilities.PUConfig;
 import dev.wp.phantoms_utilities.PUSounds;
 import dev.wp.phantoms_utilities.PUTags;
-import dev.wp.phantoms_utilities.util.PUColor;
-import dev.wp.phantoms_utilities.util.Utils;
 import dev.wp.phantoms_utilities.helpers.IMouseWheelItem;
 import dev.wp.phantoms_utilities.mixin.PipeBlockEntityAccessor;
 import dev.wp.phantoms_utilities.mixin.PipeNetworkNodeAccessor;
+import dev.wp.phantoms_utilities.util.PUColor;
+import dev.wp.phantoms_utilities.util.Utils;
+import java.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -50,11 +51,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
 
 public class SprayCan extends Item implements IMouseWheelItem {
     public SprayCan(Properties properties) {
@@ -178,6 +174,22 @@ public class SprayCan extends Item implements IMouseWheelItem {
         if (player != null) player.displayClientMessage(Component.literal(message), false);
     }
 
+  private static Optional<PipeNetworkNode> getNodeOfType(
+      PipeBlockEntity pipeBE, PipeNetworkType type) {
+    Optional<PipeNetworkNode> originalNode = Optional.empty();
+    for (PipeNetworkNode node : pipeBE.getNodes()) {
+      // Already contains a pipe of the same color/type
+      if (node.getType() == type) originalNode = Optional.of(node);
+    }
+    return originalNode;
+  }
+
+  public static boolean isBlacklisted(BlockState blockState) {
+    if (blockState.getTags().toList().contains(PUTags.Blocks.SPRAY_CAN_BLACKLIST)) return true;
+    var blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock());
+    return PUConfig.blacklistedMods.contains(blockId.getNamespace());
+  }
+
     @NotNull
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
@@ -213,57 +225,54 @@ public class SprayCan extends Item implements IMouseWheelItem {
 
         PipeNetworkType newType = PipeNetworkType.get(newTypeId);
         if (newType == null) return InteractionResult.FAIL;
-
         if (player.isShiftKeyDown()) {
-            floodFillMIPipes(level, pos, type, newType, player);
+      recolorFullMIPipeNetwork(level, pos, type, newType, player);
         } else {
-            processMIPipePos(level, pos, type, newType);
+      getNodeOfType((PipeBlockEntity) level.getBlockEntity(pos), type)
+          .ifPresent(
+              (node) -> {
+                processMIPipePos(level, pos, type, newType, node);
+                cleanUpMIPipe(level, pos);
+              });
         }
 
         playSound(player, pos, PUSounds.SPRAY_CAN_SPRAY, level);
         return InteractionResult.SUCCESS;
     }
 
-    private void floodFillMIPipes(Level level, BlockPos startPos, PipeNetworkType originalType, PipeNetworkType newType, Player player) {
-        int maxBlocks = PUConfig.maxBlockDyeCount;
-        int maxTotalChecks = PUConfig.maxTotalChecks;
-
-        Queue<BlockPos> queue = new LinkedList<>();
-        Set<BlockPos> visited = new HashSet<>();
-        queue.add(startPos);
-
-        int currTotalChecks = 0;
-        int currBlocks = 0;
-
-        while (!queue.isEmpty() && currTotalChecks < maxTotalChecks) {
-            currTotalChecks++;
-            BlockPos currentPos = queue.poll();
-            if (visited.contains(currentPos) || !Utils.mayBreakBlock(level, currentPos, level.getBlockState(currentPos), player))
-                continue;
-            visited.add(currentPos);
-
-            if (processMIPipePos(level, currentPos, originalType, newType)) {
-                currBlocks++;
-                if (currBlocks >= maxBlocks) {
-                    informPlayer(player, "Max dyeing limit (" + maxBlocks + ") reached, stopping.");
-                    break;
-                }
-                for (Direction dir : Direction.values()) queue.add(currentPos.relative(dir));
-            }
-        }
+  private void recolorFullMIPipeNetwork(
+      Level level,
+      BlockPos pipePos,
+      PipeNetworkType originalType,
+      PipeNetworkType newType,
+      Player player) {
+    var pipeBE = (PipeBlockEntity) level.getBlockEntity(pipePos);
+    getNodeOfType(pipeBE, originalType)
+        .ifPresent(
+            startNode -> {
+              var network = ((PipeNetworkNodeAccessor) startNode).getNetwork();
+              if (network == null) {
+                return;
+              }
+              // copy the entire map, since it is about to be mutated
+              var nodes = Map.copyOf(network.getRawNodeMap());
+              nodes.forEach(
+                  (blockPos, node) -> {
+                    processMIPipePos(level, blockPos, originalType, newType, node);
+                  });
+              nodes.forEach((blockPos, _node) -> cleanUpMIPipe(level, blockPos));
+            });
     }
 
-    private boolean processMIPipePos(Level level, BlockPos pos, PipeNetworkType originalType, PipeNetworkType newType) {
+  private boolean processMIPipePos(
+      Level level,
+      BlockPos pos,
+      PipeNetworkType originalType,
+      PipeNetworkType newType,
+      PipeNetworkNode originalNode) {
         if (!(level.getBlockEntity(pos) instanceof PipeBlockEntity pipeBE)) return false;
-
-        PipeNetworkNode originalNode = null;
-        for (PipeNetworkNode node : pipeBE.getNodes()) {
-            if (node.getType() == originalType) originalNode = node;
-
-            // Already contains a pipe of the same color/type
-            if (node.getType() == newType) return false;
-        }
-        if (originalNode == null) return false;
+    if (originalNode.getType() == newType) return false;
+    if (getNodeOfType(pipeBE, newType).isPresent()) return false;
 
         // Capture node data to preserve external connections and settings
         CompoundTag nodeTag = new CompoundTag();
@@ -287,14 +296,17 @@ public class SprayCan extends Item implements IMouseWheelItem {
                 break;
             }
         }
+    return true;
+  }
 
-        pipeBE.onConnectionsChanged();
+  private void cleanUpMIPipe(Level level, BlockPos pos) {
+    var pipeBE = (PipeBlockEntity) level.getBlockEntity(pos);
+    pipeBE.onConnectionsChanged();
 
-        for (Direction dir : Direction.values()) {
-            level.neighborChanged(pos.relative(dir), level.getBlockState(pos).getBlock(), pos);
-        }
-        return true;
+    for (Direction dir : Direction.values()) {
+      level.neighborChanged(pos.relative(dir), level.getBlockState(pos).getBlock(), pos);
     }
+  }
 
     private ResourceLocation getRecoloredMIPipeID(ResourceLocation originalId, PUColor color) {
         String path = originalId.getPath();
@@ -427,11 +439,5 @@ public class SprayCan extends Item implements IMouseWheelItem {
                 return;
             }
         }
-    }
-
-    public static boolean isBlacklisted(BlockState blockState) {
-        if (blockState.getTags().toList().contains(PUTags.Blocks.SPRAY_CAN_BLACKLIST)) return true;
-        var blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock());
-        return PUConfig.blacklistedMods.contains(blockId.getNamespace());
     }
 }
