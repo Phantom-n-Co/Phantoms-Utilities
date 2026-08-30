@@ -308,7 +308,7 @@ public class SprayCan extends Item implements IMouseWheelItem {
     }
   }
 
-    private ResourceLocation getRecoloredMIPipeID(ResourceLocation originalId, PUColor color) {
+  public static ResourceLocation getRecoloredMIPipeID(ResourceLocation originalId, PUColor color) {
         String path = originalId.getPath();
         String namespace = originalId.getNamespace();
 
