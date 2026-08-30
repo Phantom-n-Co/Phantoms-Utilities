@@ -94,7 +94,7 @@ public class PUClient {
                         if (path.contains("_cable")) {
                           return;
                         }
-                        if (path.equals("fluid_pipe")) {
+                        if (path.equals("fluid_pipe") || path.equals("item_pipe")) {
                             PacketDistributor.sendToServer(new SprayCanColorSelectPacket(PUColor.CLEAR));
                             return;
                         }
