@@ -2,14 +2,16 @@ package dev.wp.phantoms_utilities;
 
 import appeng.api.implementations.blockentities.IColorableBlockEntity;
 import appeng.api.util.AEColor;
-import dev.wp.phantoms_utilities.util.PUColor;
-import dev.wp.phantoms_utilities.util.Utils;
+import aztech.modern_industrialization.pipes.impl.PipeBlock;
+import aztech.modern_industrialization.pipes.impl.PipeBlockEntity;
 import dev.wp.phantoms_utilities.client.gui.SprayCanColorScreen;
 import dev.wp.phantoms_utilities.helpers.IMouseWheelItem;
 import dev.wp.phantoms_utilities.items.SprayCan;
 import dev.wp.phantoms_utilities.network.ServerBoundPacket;
 import dev.wp.phantoms_utilities.network.server.MWPacket;
 import dev.wp.phantoms_utilities.network.server.SprayCanColorSelectPacket;
+import dev.wp.phantoms_utilities.util.PUColor;
+import dev.wp.phantoms_utilities.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -80,6 +82,25 @@ public class PUClient {
                             if (color.name().equals(colorable.getColor().name())) {
                                 PacketDistributor.sendToServer(new SprayCanColorSelectPacket(color));
                                 return;
+                            }
+                        }
+                    }
+                }
+                if (Utils.isMILoaded) {
+                    BlockEntity be = player.level().getBlockEntity(pos);
+                    if (be instanceof PipeBlockEntity) {
+                        var hitPart = PipeBlock.getHitPart(player.level(), pos, blockHit);
+                        var path = hitPart.type.getIdentifier().getPath();
+                        if (path.contains("_cable")) {
+                          return;
+                        }
+                        if (path.equals("fluid_pipe")) {
+                            PacketDistributor.sendToServer(new SprayCanColorSelectPacket(PUColor.CLEAR));
+                            return;
+                        }
+                        for (PUColor color : PUColor.VALID_COLORS) {
+                            if (hitPart.type.getIdentifier().getPath().startsWith(color.registryPrefix + "_")) {
+                                PacketDistributor.sendToServer(new SprayCanColorSelectPacket(color));
                             }
                         }
                     }
