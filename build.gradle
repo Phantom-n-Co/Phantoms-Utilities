@@ -177,7 +177,7 @@ dependencies {
     runtimeOnly ("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
 
     runtimeOnly ("curse.maven:glodium-957920:5821676")
-    runtimeOnly ("curse.maven:ex-pattern-provider-892005:6251183")
+    runtimeOnly("curse.maven:ex-pattern-provider-892005:8511901")
     runtimeOnly ("curse.maven:jade-324717:5639932")
 
     runtimeOnly ("curse.maven:xycraft-653786:6872525")
