@@ -1,5 +1,6 @@
-package dev.wp.phantoms_utilities;
+package dev.wp.phantoms_utilities.config;
 
+import dev.wp.phantoms_utilities.PhantomsUtilities;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -8,7 +9,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
 @EventBusSubscriber(modid = PhantomsUtilities.ID)
-public class PUConfig {
+public class ServerConfig {
     public static final ModConfigSpec SPEC;
     private static final ModConfigSpec.Builder BUILDER;
     private static final ModConfigSpec.IntValue MAX_CABLE_DYE_COUNT;

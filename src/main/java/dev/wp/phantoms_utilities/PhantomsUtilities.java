@@ -1,5 +1,6 @@
 package dev.wp.phantoms_utilities;
 
+import dev.wp.phantoms_utilities.config.ServerConfig;
 import dev.wp.phantoms_utilities.network.InitNetwork;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +21,7 @@ public class PhantomsUtilities {
     public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
 
     public PhantomsUtilities(IEventBus bus, ModContainer container) {
-        container.registerConfig(ModConfig.Type.COMMON, PUConfig.SPEC);
+        container.registerConfig(ModConfig.Type.COMMON, ServerConfig.SPEC);
 
         bus.addListener(this::commonSetup);
         bus.addListener(InitNetwork::init);

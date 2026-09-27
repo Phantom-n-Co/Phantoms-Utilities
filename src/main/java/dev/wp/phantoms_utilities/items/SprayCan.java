@@ -15,7 +15,7 @@ import aztech.modern_industrialization.pipes.impl.PipeBlock;
 import aztech.modern_industrialization.pipes.impl.PipeBlockEntity;
 import aztech.modern_industrialization.pipes.impl.PipeVoxelShape;
 import dev.wp.phantoms_utilities.PUComponents;
-import dev.wp.phantoms_utilities.PUConfig;
+import dev.wp.phantoms_utilities.config.ServerConfig;
 import dev.wp.phantoms_utilities.PUSounds;
 import dev.wp.phantoms_utilities.PUTags;
 import dev.wp.phantoms_utilities.helpers.IMouseWheelItem;
@@ -58,8 +58,8 @@ public class SprayCan extends Item implements IMouseWheelItem {
     }
 
     private static void floodFillCables(Level level, BlockPos startPos, AEColor newColor, Direction side, Player player) {
-        final int maxTotalChecks = PUConfig.maxTotalChecks;
-        final int maxBlocks = PUConfig.maxCableDyeCount;
+        final int maxTotalChecks = ServerConfig.maxTotalChecks;
+        final int maxBlocks = ServerConfig.maxCableDyeCount;
 
         // Validate initial position
         if (!(PartHelper.getPart(level, startPos, null) instanceof IPart origPart)) return;
@@ -109,8 +109,8 @@ public class SprayCan extends Item implements IMouseWheelItem {
     }
 
     private static void floodFillBlocks(Level level, BlockPos startPos, BlockState originalState, BlockState newState, Player player) {
-        final int maxTotalChecks = PUConfig.maxTotalChecks;
-        final int maxBlocks = PUConfig.maxBlockDyeCount;
+        final int maxTotalChecks = ServerConfig.maxTotalChecks;
+        final int maxBlocks = ServerConfig.maxBlockDyeCount;
 
         Queue<BlockPos> queue = new LinkedList<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -187,7 +187,7 @@ public class SprayCan extends Item implements IMouseWheelItem {
   public static boolean isBlacklisted(BlockState blockState) {
     if (blockState.getTags().toList().contains(PUTags.Blocks.SPRAY_CAN_BLACKLIST)) return true;
     var blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock());
-    return PUConfig.blacklistedMods.contains(blockId.getNamespace());
+    return ServerConfig.blacklistedMods.contains(blockId.getNamespace());
   }
 
     @NotNull
