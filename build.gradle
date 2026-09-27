@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '1.0.23'
+    id 'net.neoforged.moddev' version '2.0.147'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -120,12 +120,14 @@ neoForge {
         client {
             client()
 
+            gameDirectory.set(project.getLayout().getProjectDirectory().dir('runs/client'))
             programArguments.addAll '--username', 'White_Phant0m', '--uuid', 'f83bd929-fbf0-4186-becb-658d676fcc42'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
             server()
+            gameDirectory.set(project.getLayout().getProjectDirectory().dir('runs/server'))
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -137,6 +139,7 @@ neoForge {
 
         data {
             data()
+            gameDirectory.set(project.getLayout().getProjectDirectory().dir('runs/data'))
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
