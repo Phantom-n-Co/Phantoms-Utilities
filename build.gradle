@@ -164,27 +164,28 @@ configurations {
 }
 
 dependencies {
-    implementation ("aztech:Modern-Industrialization:${modern_industrialization_version}")
-    implementation ("dev.technici4n:GrandPower:${grandpower_version}")
-    implementation ("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+    implementation("aztech:Modern-Industrialization:${modern_industrialization_version}")
+    implementation("dev.technici4n:GrandPower:${grandpower_version}")
+    implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
 
-    compileOnly ("org.appliedenergistics:appliedenergistics2:${ae2_version}:api")
-    runtimeOnly ("org.appliedenergistics:appliedenergistics2:${ae2_version}")
+    compileOnly("org.appliedenergistics:appliedenergistics2:${ae2_version}:api")
+    runtimeOnly("org.appliedenergistics:appliedenergistics2:${ae2_version}")
+    runtimeOnly("org.appliedenergistics:guideme:${guideme_version}")
 
-    runtimeOnly ("net.swedz:tesseract-api-neoforge:${tesseract_version}-${minecraft_version}")
-    runtimeOnly ("net.swedz:extended-industrialization:${extended_industrialization_version}-${minecraft_version}")
+    runtimeOnly("net.swedz:tesseract-api-neoforge:${tesseract_version}-${minecraft_version}")
+    runtimeOnly("net.swedz:extended-industrialization:${extended_industrialization_version}-${minecraft_version}")
 
-    runtimeOnly ("dev.emi:emi-neoforge:${emi_version}+${minecraft_version}")
-    runtimeOnly ("dev.architectury:architectury-neoforge:${architectury_version}")
-    runtimeOnly ("dev.ftb.mods:ftb-chunks-neoforge:${ftb_chunks_version}")
-    runtimeOnly ("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
+    runtimeOnly("dev.emi:emi-neoforge:${emi_version}+${minecraft_version}")
+    runtimeOnly("dev.architectury:architectury-neoforge:${architectury_version}")
+    runtimeOnly("dev.ftb.mods:ftb-chunks-neoforge:${ftb_chunks_version}")
+    runtimeOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
 
-    runtimeOnly ("curse.maven:glodium-957920:5821676")
-    runtimeOnly("curse.maven:ex-pattern-provider-892005:8511901")
-    runtimeOnly ("curse.maven:jade-324717:5639932")
+    runtimeOnly("curse.maven:glodium-957920:5821676")
+    runtimeOnly("curse.maven:ex-pattern-provider-892005:8930234")
+    runtimeOnly("curse.maven:jade-324717:8591319")
 
-    runtimeOnly ("curse.maven:xycraft-653786:6872525")
-    runtimeOnly ("curse.maven:xycraft-world-653789:6872532")
+    runtimeOnly("curse.maven:xycraft-653786:6872525")
+    runtimeOnly("curse.maven:xycraft-world-653789:6872532")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
