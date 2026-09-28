@@ -6,7 +6,12 @@
   "refmap": "phantoms_utilities.refmap.json",
   "mixins": [
     "PipeNetworkNodeAccessor",
-    "PipeBlockEntityAccessor"
+    "PipeBlockEntityAccessor",
+    "PipeItemMixin",
+    "PartPlacementMixin",
+    "PipeBlockMixin",
+    "CableBusBlockEntityMixin",
+    "BlockItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

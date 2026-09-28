@@ -1,9 +1,9 @@
 package dev.wp.phantoms_utilities.network.server;
 
-import dev.wp.phantoms_utilities.util.PUColor;
 import dev.wp.phantoms_utilities.items.SprayCan;
 import dev.wp.phantoms_utilities.network.CustomPUPayload;
 import dev.wp.phantoms_utilities.network.ServerBoundPacket;
+import dev.wp.phantoms_utilities.util.PUColor;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;

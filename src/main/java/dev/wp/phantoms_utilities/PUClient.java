@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -41,12 +42,7 @@ public class PUClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
-    @SubscribeEvent
-    private static void clientSetup(FMLClientSetupEvent event) {
-        NeoForge.EVENT_BUS.addListener(PUClient::wheelEvent);
-        NeoForge.EVENT_BUS.addListener(PUClient::onKeyInput);
-    }
-
+    @SubscribeEvent(priority = EventPriority.HIGH)
     private static void onKeyInput(final InputEvent.InteractionKeyMappingTriggered event) {
         if (!event.isPickBlock()) return;
 
@@ -54,7 +50,7 @@ public class PUClient {
         final Player player = mc.player;
         if (player == null) return;
 
-        if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SprayCan) {
+        if (player.getMainHandItem().getItem() instanceof SprayCan || player.getOffhandItem().getItem() instanceof SprayCan) {
             event.setCanceled(true);
 
             if (player.isShiftKeyDown()) {
@@ -117,6 +113,7 @@ public class PUClient {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGH)
     private static void wheelEvent(final InputEvent.MouseScrollingEvent me) {
         if (me.getScrollDeltaY() == 0) return;
 
@@ -124,8 +121,7 @@ public class PUClient {
         final Player player = mc.player;
 
         if (player != null && player.isShiftKeyDown()) {
-            var mainHand = player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof IMouseWheelItem;
-            if (mainHand) {
+            if (player.getMainHandItem().getItem() instanceof IMouseWheelItem || player.getOffhandItem().getItem() instanceof IMouseWheelItem) {
                 ServerBoundPacket msg = new MWPacket(me.getScrollDeltaY() > 0);
                 PacketDistributor.sendToServer(msg);
                 me.setCanceled(true);

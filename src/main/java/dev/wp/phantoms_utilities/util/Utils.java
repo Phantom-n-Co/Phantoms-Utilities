@@ -1,6 +1,7 @@
 package dev.wp.phantoms_utilities.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -9,6 +10,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -34,7 +36,6 @@ public final class Utils {
         String path = originalId.getPath();
 
         Set<String> validColors = PUColor.VALID_COLORS.stream().map(validColor -> validColor.registryPrefix).collect(Collectors.toSet());
-
         String colorPattern = validColors.stream().sorted((a, b) -> Integer.compare(b.length(), a.length())).collect(Collectors.joining("|"));
 
         Pattern pattern = Pattern.compile("(?<=^|_)(" + colorPattern + ")(?=_|$)");
@@ -71,6 +72,15 @@ public final class Utils {
         }
 
         return originalId;
+    }
+
+    // Wool, concrete, beds etc. have no plain variant; fall back to white_.
+    public static @Nullable ResourceLocation findClearedID(ResourceLocation id, Registry<?> registry) {
+        ResourceLocation cleared = getClearedBlockID(id);
+        if (cleared.equals(id)) return null;
+        if (registry.containsKey(cleared)) return cleared;
+        ResourceLocation white = ResourceLocation.fromNamespaceAndPath(cleared.getNamespace(), "white_" + cleared.getPath());
+        return !white.equals(id) && registry.containsKey(white) ? white : null;
     }
 
     public static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState, Property<T> property) {
