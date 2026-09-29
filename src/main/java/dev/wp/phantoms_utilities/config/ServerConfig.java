@@ -41,7 +41,7 @@ public class ServerConfig {
         BLACKLISTED_MODS = BUILDER
                 .comment("Mods to blacklist from the spray can")
                 .translation(configKey("spray_can.mod_blacklist"))
-                .defineList("modBlacklist", List.of("spectrum", "pastel", "xycraft_world"), (o) -> true);
+                .defineList("modBlacklist", List.of("spectrum", "pastel"), (o) -> true);
 
         SPEC = BUILDER.build();
     }
