@@ -35,14 +35,14 @@ public final class Utils {
         String namespace = originalId.getNamespace();
         String path = originalId.getPath();
 
-        Set<String> validColors = PUColor.VALID_COLORS.stream().map(validColor -> validColor.registryPrefix).collect(Collectors.toSet());
+        Set<String> validColors = PUColor.VALID_COLORS.stream().map(validColor -> validColor.getName()).collect(Collectors.toSet());
         String colorPattern = validColors.stream().sorted((a, b) -> Integer.compare(b.length(), a.length())).collect(Collectors.joining("|"));
 
         Pattern pattern = Pattern.compile("(?<=^|_)(" + colorPattern + ")(?=_|$)");
         Matcher matcher = pattern.matcher(path);
 
         if (matcher.find()) {
-            String updatedPath = matcher.replaceFirst(color.registryPrefix);
+            String updatedPath = matcher.replaceFirst(color.getName());
 
             return ResourceLocation.fromNamespaceAndPath(namespace, updatedPath);
         }
@@ -54,7 +54,7 @@ public final class Utils {
         String namespace = originalId.getNamespace();
         String path = originalId.getPath();
 
-        Set<String> validColors = PUColor.VALID_COLORS.stream().map(validColor -> validColor.registryPrefix).collect(Collectors.toSet());
+        Set<String> validColors = PUColor.VALID_COLORS.stream().map(validColor -> validColor.getName()).collect(Collectors.toSet());
         String colorPattern = validColors.stream().sorted((a, b) -> Integer.compare(b.length(), a.length())).collect(Collectors.joining("|"));
 
         // Match color prefix or suffix with an optional underscore, and optional "stained"

@@ -14,9 +14,7 @@ public final class PULanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        for (PUColor color : PUColor.values()) {
-            add(color.toString(), color.getEnglishName());
-        }
+        add(PUColor.CLEAR_TRANSLATION_KEY, "Clear");
 
         add(PUItems.SPRAY_CAN.get(), "Spray Can");
         add("phantoms_utilities.configuration.items", "Item configs");

@@ -44,6 +44,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -72,7 +73,10 @@ import java.util.Set;
 
 public class SprayCan extends Item implements IMouseWheelItem {
     public SprayCan(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties
+                .stacksTo(1)
+                .component(PUComponents.SELECTED_COLOR, PUColor.WHITE)
+        );
     }
 
     private static void floodFillCables(Level level, BlockPos startPos, AEColor newColor, Direction side, Player player) {
@@ -335,14 +339,14 @@ public class SprayCan extends Item implements IMouseWheelItem {
         String namespace = originalId.getNamespace();
 
         for (PUColor c : PUColor.VALID_COLORS) {
-            if (path.startsWith(c.registryPrefix + "_")) {
-                path = path.substring(c.registryPrefix.length() + 1);
+            if (path.startsWith(c.getName() + "_")) {
+                path = path.substring(c.getName().length() + 1);
                 break;
             }
         }
 
         if (color == PUColor.CLEAR) return ResourceLocation.fromNamespaceAndPath(namespace, path);
-        else return ResourceLocation.fromNamespaceAndPath(namespace, color.registryPrefix + "_" + path);
+        else return ResourceLocation.fromNamespaceAndPath(namespace, color.getName() + "_" + path);
     }
 
     @NotNull
@@ -409,7 +413,7 @@ public class SprayCan extends Item implements IMouseWheelItem {
 
     // glass -> red_stained_glass, terracotta -> red_terracotta
     private static @Nullable ResourceLocation findDyedBlockID(ResourceLocation id, PUColor color) {
-        for (String prefix : List.of(color.registryPrefix + "_", color.registryPrefix + "_stained_")) {
+        for (String prefix : List.of(color.getName() + "_", color.getName() + "_stained_")) {
             ResourceLocation candidate = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), prefix + id.getPath());
             if (BuiltInRegistries.BLOCK.containsKey(candidate)
                     && BuiltInRegistries.BLOCK.get(candidate).defaultBlockState().is(Tags.Blocks.DYED)) {
@@ -588,7 +592,7 @@ public class SprayCan extends Item implements IMouseWheelItem {
     public Component getName(ItemStack stack) {
         Component extra = Component.empty();
         final PUColor color = getActiveColor(stack);
-        if (color != null && Dist.CLIENT.isClient()) extra = Component.translatable(color.translationKey);
+        if (color != null && Dist.CLIENT.isClient()) extra = color.getDisplayName();
 
         return super.getName(stack).copy().append(" - ").append(extra);
     }

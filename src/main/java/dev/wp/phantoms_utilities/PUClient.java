@@ -95,7 +95,7 @@ public class PUClient {
                             return;
                         }
                         for (PUColor color : PUColor.VALID_COLORS) {
-                            if (hitPart.type.getIdentifier().getPath().startsWith(color.registryPrefix + "_")) {
+                            if (hitPart.type.getIdentifier().getPath().startsWith(color.getName() + "_")) {
                                 PacketDistributor.sendToServer(new SprayCanColorSelectPacket(color));
                             }
                         }
@@ -104,7 +104,7 @@ public class PUClient {
 
                 String path = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
                 for (PUColor color : PUColor.VALID_COLORS) {
-                    if (path.contains(color.registryPrefix)) {
+                    if (path.contains(color.getName())) {
                         PacketDistributor.sendToServer(new SprayCanColorSelectPacket(color));
                         return;
                     }

@@ -81,11 +81,11 @@ public class SprayCanColorScreen extends Screen {
 
         int titleY = (int) (centerY - OUTER_RADIUS - HOVER_GROW - 16);
         graphics.drawCenteredString(this.font, this.title, centerX, titleY, 0xFFFFFF);
-        graphics.drawCenteredString(this.font, Component.translatable(PUColor.CLEAR.translationKey),
+        graphics.drawCenteredString(this.font, PUColor.CLEAR.getDisplayName(),
                 centerX, centerY - this.font.lineHeight / 2 + 1, hovered == PUColor.CLEAR ? 0xFFFF55 : 0xFFFFFF);
 
         if (hovered != null && hovered != PUColor.CLEAR) {
-            graphics.renderTooltip(this.font, Component.translatable(hovered.translationKey), mouseX, mouseY);
+            graphics.renderTooltip(this.font, hovered.getDisplayName(), mouseX, mouseY);
         }
     }
 
