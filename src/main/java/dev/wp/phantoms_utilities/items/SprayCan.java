@@ -19,6 +19,7 @@ import aztech.modern_industrialization.pipes.impl.PipeVoxelShape;
 import dev.wp.phantoms_utilities.PUComponents;
 import dev.wp.phantoms_utilities.PUSounds;
 import dev.wp.phantoms_utilities.PUTags;
+import dev.wp.phantoms_utilities.PUTooltips;
 import dev.wp.phantoms_utilities.config.ServerConfig;
 import dev.wp.phantoms_utilities.helpers.IMouseWheelItem;
 import dev.wp.phantoms_utilities.mixin.PipeBlockEntityAccessor;
@@ -43,6 +44,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -59,7 +61,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -590,6 +591,20 @@ public class SprayCan extends Item implements IMouseWheelItem {
         if (color != null && Dist.CLIENT.isClient()) extra = Component.translatable(color.translationKey);
 
         return super.getName(stack).copy().append(" - ").append(extra);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        var use = PUTooltips.key("key.use");
+        var sneak = PUTooltips.key("key.sneak");
+        var pick = PUTooltips.key("key.pickItem");
+        PUTooltips.addShiftInfo(tooltip,
+                PUTooltips.line(PUTooltips.SPRAY_CAN_PAINT, use),
+                PUTooltips.line(PUTooltips.SPRAY_CAN_PAINT_CONNECTED, sneak, use),
+                PUTooltips.line(PUTooltips.SPRAY_CAN_CYCLE, sneak),
+                PUTooltips.line(PUTooltips.SPRAY_CAN_PICK, pick),
+                PUTooltips.line(PUTooltips.SPRAY_CAN_PICKER, sneak, pick),
+                PUTooltips.line(PUTooltips.SPRAY_CAN_OFFHAND));
     }
 
     @Override

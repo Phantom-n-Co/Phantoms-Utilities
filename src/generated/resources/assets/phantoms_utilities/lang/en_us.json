@@ -23,5 +23,12 @@
   "phantoms_utilities.configuration.spray_can.max_block_dye_count": "Max Block Dye Count",
   "phantoms_utilities.configuration.spray_can.max_cable_dye_count": "Max Cable Dye Count",
   "phantoms_utilities.configuration.spray_can.max_total_checks": "Max Total Checks",
-  "phantoms_utilities.configuration.spray_can.mod_blacklist": "Blacklisted Mods"
+  "phantoms_utilities.configuration.spray_can.mod_blacklist": "Blacklisted Mods",
+  "tooltip.phantoms_utilities.shift_required": "Press [Shift] for info",
+  "tooltip.phantoms_utilities.spray_can.cycle": "- %s + Scroll: cycle colors",
+  "tooltip.phantoms_utilities.spray_can.offhand": "- In offhand: paints placed blocks, strips color from broken ones",
+  "tooltip.phantoms_utilities.spray_can.paint": "- %s: paint a block, cable, pipe or sheep",
+  "tooltip.phantoms_utilities.spray_can.paint_connected": "- %s + %s: paint all connected",
+  "tooltip.phantoms_utilities.spray_can.pick": "- %s: copy color from a block",
+  "tooltip.phantoms_utilities.spray_can.picker": "- %s + %s: open color picker"
 }
