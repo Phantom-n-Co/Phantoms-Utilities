@@ -44,7 +44,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -52,6 +51,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -173,6 +175,44 @@ public class SprayCan extends Item implements IMouseWheelItem {
         BlockState currentState = level.getBlockState(pos);
         if (!currentState.equals(originalState)) return false;
 
+        // Beds and doors break when their other half is a different block, so swap both halves without
+        // shape updates first, then notify neighbours once both match.
+        BlockPos partnerPos = getPartnerPos(originalState, pos);
+        BlockState partnerState = partnerPos == null ? null : level.getBlockState(partnerPos);
+        boolean hasPartner = partnerState != null && partnerState.is(originalState.getBlock());
+
+        int silent = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
+        swapBlock(level, pos, newState, silent);
+        if (hasPartner) swapBlock(level, partnerPos, withProperties(newState.getBlock(), partnerState), silent);
+
+        if ((flags & Block.UPDATE_NEIGHBORS) != 0) {
+            notifyNeighbours(level, pos, newState);
+            if (hasPartner) notifyNeighbours(level, partnerPos, level.getBlockState(partnerPos));
+        }
+
+        return true;
+    }
+
+    private static @Nullable BlockPos getPartnerPos(BlockState state, BlockPos pos) {
+        if (state.hasProperty(BlockStateProperties.BED_PART) && state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            return pos.relative(state.getValue(BlockStateProperties.BED_PART) == BedPart.FOOT ? facing : facing.getOpposite());
+        }
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            return state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        }
+        return null;
+    }
+
+    private static BlockState withProperties(Block block, BlockState source) {
+        BlockState state = block.defaultBlockState();
+        for (Property<?> property : source.getProperties()) {
+            state = Utils.copyProperties(source, state, property);
+        }
+        return state;
+    }
+
+    private static void swapBlock(Level level, BlockPos pos, BlockState newState, int flags) {
         CompoundTag data = null;
         if (level.getBlockEntity(pos) instanceof BlockEntity be) {
             data = be.saveWithFullMetadata(level.registryAccess());
@@ -184,8 +224,11 @@ public class SprayCan extends Item implements IMouseWheelItem {
             newBe.loadWithComponents(data, level.registryAccess());
             newBe.setChanged();
         }
+    }
 
-        return true;
+    private static void notifyNeighbours(Level level, BlockPos pos, BlockState state) {
+        level.blockUpdated(pos, state.getBlock());
+        state.updateNeighbourShapes(level, pos, Block.UPDATE_ALL);
     }
 
     private static void playSound(Player player, BlockPos pos, SoundEvent sound, Level level) {
@@ -231,6 +274,13 @@ public class SprayCan extends Item implements IMouseWheelItem {
         else if (Utils.isMILoaded && level.getBlockState(pos).getBlock() instanceof PipeBlock)
             return paintMIPipes(level, pos, getActiveColor(stack), new BlockHitResult(ctx.getClickLocation(), ctx.getClickedFace(), ctx.getClickedPos(), ctx.isInside()), player);
         else return paintBlocks(level, pos, getActiveColor(stack), player);
+    }
+
+    @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext ctx) {
+        if (ctx.getHand() != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+        InteractionResult result = useOn(ctx);
+        return result == InteractionResult.PASS ? InteractionResult.FAIL : result;
     }
 
     private InteractionResult paintMIPipes(Level level, BlockPos pos, PUColor color, BlockHitResult hit, Player player) {

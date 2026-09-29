@@ -31,6 +31,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -49,6 +51,34 @@ public class PUClient {
     private static void registerItemProperties(FMLClientSetupEvent event) {
         event.enqueueWork(() -> ItemProperties.register(PUItems.SPRAY_CAN.get(), PhantomsUtilities.id("color"),
                 (stack, level, entity, seed) -> stack.getOrDefault(PUComponents.SELECTED_COLOR, PUColor.CLEAR).ordinal()));
+    }
+
+    @SubscribeEvent
+    private static void onMouseButton(InputEvent.MouseButton.Pre event) {
+        if (event.getAction() == GLFW.GLFW_PRESS
+                && Minecraft.getInstance().options.keyPickItem.isActiveAndMatches(InputConstants.Type.MOUSE.getOrCreate(event.getButton()))
+                && openPickerOnMiss()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    private static void onKey(InputEvent.Key event) {
+        final Minecraft mc = Minecraft.getInstance();
+        if (event.getAction() == GLFW.GLFW_PRESS
+                && mc.options.keyPickItem.isActiveAndMatches(InputConstants.getKey(event.getKey(), event.getScanCode()))
+                && openPickerOnMiss()) {
+            while (mc.options.keyPickItem.consumeClick()) ;
+        }
+    }
+
+    private static boolean openPickerOnMiss() {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.screen != null || mc.getOverlay() != null) return false;
+        if (mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) return false;
+        if (!(mc.player.getMainHandItem().getItem() instanceof SprayCan || mc.player.getOffhandItem().getItem() instanceof SprayCan)) return false;
+        mc.setScreen(new SprayCanColorScreen());
+        return true;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
