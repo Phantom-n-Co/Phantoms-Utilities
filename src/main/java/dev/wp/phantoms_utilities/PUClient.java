@@ -50,7 +50,7 @@ public class PUClient {
     // Selects the spray_can model override matching the stored color (ordinal; Clear when unset).
     private static void registerItemProperties(FMLClientSetupEvent event) {
         event.enqueueWork(() -> ItemProperties.register(PUItems.SPRAY_CAN.get(), PhantomsUtilities.id("color"),
-                (stack, level, entity, seed) -> stack.getOrDefault(PUComponents.SELECTED_COLOR, PUColor.CLEAR).ordinal()));
+                (stack, level, entity, seed) -> stack.getOrDefault(PUComponents.SELECTED_COLOR, PUColor.WHITE).ordinal()));
     }
 
     @SubscribeEvent
