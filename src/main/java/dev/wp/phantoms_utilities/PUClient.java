@@ -13,6 +13,7 @@ import dev.wp.phantoms_utilities.network.server.SprayCanColorSelectPacket;
 import dev.wp.phantoms_utilities.util.PUColor;
 import dev.wp.phantoms_utilities.util.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.InteractionHand;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -38,8 +40,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(value = Dist.CLIENT, modid = PhantomsUtilities.ID)
 public class PUClient {
 
-    public PUClient(ModContainer container) {
+    public PUClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        modBus.addListener(PUClient::registerItemProperties);
+    }
+
+    // Selects the spray_can model override matching the stored color (ordinal; Clear when unset).
+    private static void registerItemProperties(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> ItemProperties.register(PUItems.SPRAY_CAN.get(), PhantomsUtilities.id("color"),
+                (stack, level, entity, seed) -> stack.getOrDefault(PUComponents.SELECTED_COLOR, PUColor.CLEAR).ordinal()));
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

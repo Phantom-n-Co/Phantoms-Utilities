@@ -1,0 +1,110 @@
+{
+  "parent": "phantoms_utilities:item/spray_can_base",
+  "overrides": [
+    {
+      "model": "phantoms_utilities:item/spray_can_white",
+      "predicate": {
+        "phantoms_utilities:color": 0.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_light_gray",
+      "predicate": {
+        "phantoms_utilities:color": 1.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_gray",
+      "predicate": {
+        "phantoms_utilities:color": 2.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_black",
+      "predicate": {
+        "phantoms_utilities:color": 3.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_brown",
+      "predicate": {
+        "phantoms_utilities:color": 4.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_red",
+      "predicate": {
+        "phantoms_utilities:color": 5.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_orange",
+      "predicate": {
+        "phantoms_utilities:color": 6.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_yellow",
+      "predicate": {
+        "phantoms_utilities:color": 7.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_lime",
+      "predicate": {
+        "phantoms_utilities:color": 8.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_green",
+      "predicate": {
+        "phantoms_utilities:color": 9.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_cyan",
+      "predicate": {
+        "phantoms_utilities:color": 10.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_light_blue",
+      "predicate": {
+        "phantoms_utilities:color": 11.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_blue",
+      "predicate": {
+        "phantoms_utilities:color": 12.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_purple",
+      "predicate": {
+        "phantoms_utilities:color": 13.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_magenta",
+      "predicate": {
+        "phantoms_utilities:color": 14.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_pink",
+      "predicate": {
+        "phantoms_utilities:color": 15.0
+      }
+    },
+    {
+      "model": "phantoms_utilities:item/spray_can_clear",
+      "predicate": {
+        "phantoms_utilities:color": 16.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "phantoms_utilities:item/spray_can/spray_can_white"
+  }
+}

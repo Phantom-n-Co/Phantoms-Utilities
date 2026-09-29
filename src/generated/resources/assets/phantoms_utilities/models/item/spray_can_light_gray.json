@@ -1,0 +1,6 @@
+{
+  "parent": "phantoms_utilities:item/spray_can_base",
+  "textures": {
+    "layer0": "phantoms_utilities:item/spray_can/spray_can_light_gray"
+  }
+}
